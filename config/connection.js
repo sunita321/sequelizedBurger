@@ -1,33 +1,23 @@
-//Node Connection to MySQL
+var Sequelize = require('sequelize');
 
-var mysql = require ('mysql');
+//Use either JAWS for production or dev environment
+var env = process.env.JAWSDB_URL || 'development';
 
-var connection;
+var config = require('./config')[env];
 
-if (process.env.JAWSDB_URL)
+//set up sequelize connection
+if (config.use_env_variable) 
 {
-	connection = mysql.createConnection(process.env.JAWSDB_URL);
-}
-else
+  //var sequelize = new Sequelize(process.env[config.use_env_variable]);
+  var sequelize = new Sequelize(process.env.JAWSDB_URL);
+} 
+else 
 {
-	connection = mysql.createConnection(
-	{
-		host: 'localhost',
-		user: 'root',
-		password: 'jeff00',
-		database: 'burgers_db'
+  var sequelize = new Sequelize(config.database, config.username, config.password, 
+  	{
+		host: config.host,
+		dialect: config.dialect
 	});
-};
+}
 
-
-connection.connect(function(err) 
-{
-  if (err) 
-  {
-    console.error('error connecting: ' + err.stack);
-    return;
-  };
-  console.log('connected as id ' + connection.threadId);
-});
-
-module.exports = connection;
+module.exports = sequelize;

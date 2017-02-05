@@ -1,36 +1,21 @@
-// import orm.js into burger.js
-var orm = require('../config/orm.js');
-
-// create the code that will call the ORM functions using burger specific input for the ORM.
-var burger = 
+'use strict';
+module.exports = function(sequelize, DataType) 
 {
-
-  selectAll: function(callback)
+  var burgers = sequelize.define('burgers', 
   {
-    orm.selectAll(function(res)
-    {
-      callback(res);
-    });
-  },
-
-  insertOne: function(burger_name, callback)
+    burger_name: DataType.STRING,
+    devoured: DataType.BOOLEAN,
+    devourerId: DataType.INTEGER
+  }, 
   {
-    orm.insertOne(burger_name, function(res)
+    classMethods: 
     {
-      callback(res);
-    });
-  },
+      associate: function(models) 
+      {
 
-  updateOne: function(burger_id, callback)
-  {
-    orm.updateOne(burger_id, function(res)
-    {
-      callback(res);
-    });
-  }
-
+        burgers.hasOne(models.devourers)
+      }
+    }
+  });
+  return burgers;
 };
-
-
-// Export at the end of the burger.js file.
-module.exports = burger;
